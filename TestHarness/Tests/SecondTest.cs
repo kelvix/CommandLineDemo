@@ -2,7 +2,7 @@ using ConsoleApp.Tests;
 
 namespace TestHarness.Tests
 {
-    public class DemoTest : ITest
+    public class SecondTest : ITest
     {
         public void Arrange()
         {
@@ -16,7 +16,7 @@ namespace TestHarness.Tests
 
         public bool Assert()
         {
-            return true;
+            throw new System.NotImplementedException();
         }
     }
 }

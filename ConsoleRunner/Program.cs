@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Mime;
 using CommandLine;
-using ConsoleApp.IoC;
 using ConsoleApp.Tests;
-using Ninject;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ConsoleApp
 {
@@ -15,9 +13,14 @@ namespace ConsoleApp
 
         private static void Main(string[] args)
         {
-            IKernel kernel = new StandardKernel(new TestModule());
-            _tests = kernel.GetAll<ITest>();
+            var serviceCollection = new ServiceCollection();
+            var startup = new Startup();
             
+            startup.ConfigureServices(serviceCollection);
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+
+            _tests = serviceProvider.GetServices<ITest>();
+
             if (args.Length > 0)
             {
                 Parser.Default.ParseArguments<Options>(args)

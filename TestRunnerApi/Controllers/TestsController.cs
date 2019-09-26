@@ -1,16 +1,24 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using TestRunnerApi.Services;
 
 namespace TestRunnerApi.Controllers
 {
     [Route("api/tests")]
     public class TestsController : ControllerBase
-    { 
+    {
+        private readonly ITestResolver _testResolver;
+
+        public TestsController(ITestResolver testResolver)
+        {
+            _testResolver = testResolver;
+        }
+
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
-            return new string[] {"value1", "value2"};
+            return _testResolver.ListTests();
         }
         
         // GET api/tests/5

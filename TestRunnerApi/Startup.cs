@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TestHarness.IoC;
+using TestRunnerApi.Services;
 
 namespace TestRunnerApi
 {
@@ -18,7 +20,10 @@ namespace TestRunnerApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc()
+            // register all known tests
+            TestModule.ConfigureServices(services);
+            services.AddTransient<ITestResolver, TestResolver>()
+                .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
