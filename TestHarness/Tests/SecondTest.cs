@@ -1,5 +1,3 @@
-using ConsoleApp.Tests;
-
 namespace TestHarness.Tests
 {
     public class SecondTest : ITest

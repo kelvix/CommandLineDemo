@@ -1,4 +1,4 @@
-namespace ConsoleApp.Tests
+namespace TestHarness.Tests
 {
     public interface ITest
     {

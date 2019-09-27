@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using CommandLine;
-using ConsoleApp.Tests;
 using Microsoft.Extensions.DependencyInjection;
+using TestHarness.Tests;
 
 namespace ConsoleApp
 {

@@ -1,4 +1,3 @@
-using ConsoleApp.Tests;
 using Microsoft.Extensions.DependencyInjection;
 using TestHarness.Tests;
 

@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ConsoleApp.Tests;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using TestHarness.Tests;
+using TestRunnerApi.Models;
 
 namespace TestRunnerApi.Services
 {
@@ -21,6 +22,20 @@ namespace TestRunnerApi.Services
             var tests = _provider.GetServices<ITest>();
 
             return tests.Select(test => test.GetType().Name).ToList();
+        }
+
+        public ITest TestNameToType(ScheduleExecutionRequest executionRequest)
+        {
+            if (string.IsNullOrWhiteSpace(executionRequest.TestName))
+            {
+                throw new ArgumentNullException(nameof(executionRequest.TestName),
+                    "A TestName must be provided.");
+            }
+
+            var tests = _provider.GetServices<ITest>();
+
+            return tests.FirstOrDefault(test =>
+                test.GetType().Name.Equals(executionRequest.TestName));
         }
     }
 }

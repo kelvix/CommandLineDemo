@@ -23,6 +23,7 @@ namespace TestRunnerApi
             // register all known tests
             TestModule.ConfigureServices(services);
             services.AddTransient<ITestResolver, TestResolver>()
+                .AddTransient<IApiTestExecutor, ApiTestExecutor>()
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
