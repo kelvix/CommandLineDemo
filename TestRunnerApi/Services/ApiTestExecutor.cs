@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using TestHarness;
+using TestHarness.Models;
 using TestHarness.Tests;
 
 namespace TestRunnerApi.Services
@@ -12,8 +13,8 @@ namespace TestRunnerApi.Services
     {
         private readonly ITestExecutor _executor;
 
-        private ConcurrentDictionary<string, TestTaskHolder> _testDictionary =
-            new ConcurrentDictionary<string, TestTaskHolder>();
+        private static readonly ConcurrentDictionary<string, TestMeta> TaskHolder =
+            new ConcurrentDictionary<string, TestMeta>();
 
         /// <summary>
         /// 
@@ -29,25 +30,29 @@ namespace TestRunnerApi.Services
         /// </summary>
         /// <param name="test"></param>
         /// <returns></returns>
-        public async Task ExecuteAsync(ITest test)
+        public TestMeta Execute(ITest test)
         {
-            var taskId = Guid.NewGuid().ToString();
-            var cancellationToken = new CancellationToken();
-            var taskHolder = new TestTaskHolder
+            var runningTest = new TestMeta
             {
-                Task = _executor.ExecuteTestAsync(test, cancellationToken),
-                Token = cancellationToken
+                Id = Guid.NewGuid().ToString(),
+                Status = TestStatus.Submitted,
+                CancellationToken = new CancellationToken(),
             };
 
-            _testDictionary.TryAdd(taskId, taskHolder);
-            await taskHolder.Task;
-            _testDictionary.Remove(taskId, out var value);
-        }
-    }
+            Task.Run(async () =>
+            {
+                TaskHolder.TryAdd(runningTest.Id, runningTest);
+                await _executor.ExecuteTestAsync(test, runningTest);
+                TaskHolder.Remove(runningTest.Id, out var value);
+            });
 
-    public class TestTaskHolder
-    {
-        public Task<bool> Task { get; set; }
-        public CancellationToken Token { get; set; }
+            return runningTest;
+        }
+
+        public TestMeta FindTest(string id)
+        {
+            TaskHolder.TryGetValue(id, out var testMeta);
+            return testMeta;
+        }
     }
 }

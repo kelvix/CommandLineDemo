@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+using TestHarness.Models;
 using TestHarness.Tests;
 
 namespace TestHarness
@@ -25,12 +26,11 @@ namespace TestHarness
             });
         }
 
-        public async Task<bool> ExecuteTestAsync(ITest test, CancellationToken cancellationToken)
+        public async Task<bool> ExecuteTestAsync(ITest test, TestMeta testMeta)
         {
-            return await Task.Run(() =>
-            {
-                return ExecuteTest(test);
-            }, cancellationToken);
+            testMeta.Status = TestStatus.Running;
+            return await Task.Run(() => 
+                ExecuteTest(test), testMeta.CancellationToken);
         }
     }
 }

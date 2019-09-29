@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using TestHarness.Models;
 using TestRunnerApi.Models;
 using TestRunnerApi.Services;
 
@@ -23,24 +24,35 @@ namespace TestRunnerApi.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
-            return _testResolver.ListTests();
+            return Ok(_testResolver.ListTests());
         }
 
         // GET api/tests/5
         [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        public ActionResult<TestMeta> Get(string id)
         {
-            return "value";
+            var testMeta = _testExecutor.FindTest(id);
+
+            if (testMeta == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(testMeta);
         }
 
         // POST api/tests
         [HttpPost]
         public ActionResult Post([FromBody] ScheduleExecutionRequest value)
         {
+            var uriPath = Request.Path.ToUriComponent();
+            
             try
             {
-                _testResolver.TestNameToType(value);
-                return Ok();
+                var test = _testResolver.TestNameToType(value);
+                var result = _testExecutor.Execute(test);
+
+                return Created($"{uriPath}/{result.Id}", result);
             }
             catch (ArgumentNullException e)
             {

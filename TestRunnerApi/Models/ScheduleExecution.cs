@@ -1,3 +1,5 @@
+using TestHarness.Models;
+
 namespace TestRunnerApi.Models
 {
     public class ScheduleExecutionRequest

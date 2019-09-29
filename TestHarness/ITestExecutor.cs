@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+using TestHarness.Models;
 using TestHarness.Tests;
 
 namespace TestHarness
@@ -29,8 +30,8 @@ namespace TestHarness
         /// belongs to the to maintain this token.
         /// </summary>
         /// <param name="test"></param>
-        /// <param name="cancellationToken"></param>
+        /// <param name="testMeta"></param>
         /// <returns></returns>
-        Task<bool> ExecuteTestAsync(ITest test, CancellationToken cancellationToken);
+        Task<bool> ExecuteTestAsync(ITest test, TestMeta testMeta);
     }
 }
